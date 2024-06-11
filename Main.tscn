@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Mob.tscn" type="PackedScene" id=2]
@@ -10,11 +10,7 @@ extents = Vector3( 60, 2, 60 )
 [sub_resource type="CubeMesh" id=2]
 size = Vector3( 60, 2, 60 )
 
-[sub_resource type="SpatialMaterial" id=4]
-albedo_color = Color( 1, 0, 0, 1 )
-
 [sub_resource type="CylinderMesh" id=3]
-material = SubResource( 4 )
 
 [sub_resource type="Curve3D" id=5]
 _data = {
@@ -39,47 +35,54 @@ mesh = SubResource( 2 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.0674581, 0.997722, 0, -0.997722, 0.0674581, 0, 27.213, 0 )
+shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 
-[node name="CameraPivot" type="Position3D" parent="."]
+[node name="CameraPivot2" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0.184, 0, 0 )
 
-[node name="Camera" type="Camera" parent="CameraPivot"]
-transform = Transform( 1, 0, 0, 0, 0.469071, 0.883161, 0, -0.883161, 0.469071, 0, 27.6165, 21.0347 )
+[node name="Camera" type="Camera" parent="CameraPivot2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 19 )
+projection = 1
 fov = 50.0
-near = 0.01
-far = 87.4
+size = 19.0
 
 [node name="Cylinders" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -14 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -3 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -15 )
 mesh = SubResource( 3 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 35 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0, -15 )
 mesh = SubResource( 3 )
 skeleton = NodePath("")
 
 [node name="MeshInstance3" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 35 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0, 16 )
 mesh = SubResource( 3 )
 skeleton = NodePath("")
 
 [node name="MeshInstance4" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, -3 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 16 )
 mesh = SubResource( 3 )
 skeleton = NodePath("")
+
+[node name="SpawnPath" type="Path" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+curve = SubResource( 5 )
+
+[node name="SpawnLocation" type="PathFollow" parent="SpawnPath"]
+transform = Transform( -0.491816, 0, -0.870699, 0, 1, 0, 0.870699, 0, -0.491816, -19.1143, 0, 18.5628 )
+offset = 34.5391
+rotation_mode = 1
+cubic_interp = false
+loop = false
 
 [node name="MobTimer" type="Timer" parent="."]
 wait_time = 0.5
 autostart = true
-
-[node name="SpawnPath" type="Path" parent="."]
-curve = SubResource( 5 )
-
-[node name="SpawnLocation" type="PathFollow" parent="SpawnPath"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -14 )
 
 [connection signal="timeout" from="MobTimer" to="." method="_on_MobTimer_timeout"]
