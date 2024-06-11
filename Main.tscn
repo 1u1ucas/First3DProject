@@ -28,6 +28,8 @@ mob_scene = ExtResource( 2 )
 
 [node name="Ground" type="StaticBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0003, 0 )
+collision_layer = 4
+collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="Ground"]
 shape = SubResource( 1 )
@@ -43,7 +45,7 @@ transform = Transform( 1, 0, 0, 0, 0.0674581, 0.997722, 0, -0.997722, 0.0674581,
 [node name="CameraPivot" type="Position3D" parent="."]
 
 [node name="Camera" type="Camera" parent="CameraPivot"]
-transform = Transform( 1, 0, 0, 0, -0.0353532, 0.999375, 0, -0.999375, -0.0353532, 0, 32.6165, 1.03468 )
+transform = Transform( 1, 0, 0, 0, 0.469071, 0.883161, 0, -0.883161, 0.469071, 0, 27.6165, 21.0347 )
 fov = 50.0
 near = 0.01
 far = 87.4
@@ -52,20 +54,21 @@ far = 87.4
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -14 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Cylinders"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -3 )
 mesh = SubResource( 3 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 33 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 35 )
 mesh = SubResource( 3 )
 skeleton = NodePath("")
 
 [node name="MeshInstance3" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, 33 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 35 )
 mesh = SubResource( 3 )
 skeleton = NodePath("")
 
 [node name="MeshInstance4" type="MeshInstance" parent="Cylinders"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, -3 )
 mesh = SubResource( 3 )
 skeleton = NodePath("")
 
