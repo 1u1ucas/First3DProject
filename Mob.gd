@@ -1,61 +1,42 @@
 extends KinematicBody
 
-export var bounce_impulse = 16
-# Vitesse minimale du mob en mètres par seconde.
+# Emitted when the player jumped on the mob.
+signal squashed
+
+# Minimum speed of the mob in meters per second.
 export var min_speed = 10
-# Vitesse maximale du mob en mètres par seconde.
+# Maximum speed of the mob in meters per second.
 export var max_speed = 18
 
 var velocity = Vector3.ZERO
-
-signal squashed
-
-func _ready():
-	# Assurez-vous que le signal est connecté
-	if not $VisibilityNotifier.is_connected("screen_exited", self, "_on_VisibilityNotifier_screen_exited"):
-		var result = $VisibilityNotifier.connect("screen_exited", self, "_on_VisibilityNotifier_screen_exited")
-		if result != OK:
-			print("Failed to connect 'screen_exited' signal")
+var start_position = Vector3()
+var player_position = Vector3()
 
 func _physics_process(_delta):
 	velocity = move_and_slide(velocity)
-	
-	for i in range(get_slide_count()):
-		var collision = get_slide_collision(i)
 
-		if collision.collider and collision.collider.is_in_group("mob"):
-			var mob = collision.collider
-			if Vector3.UP.dot(collision.normal) > 0.1:
-				if mob.has_method("squash"):
-					mob.squash()
-				velocity.y = bounce_impulse
-				break
+func initialize(_start_position, _player_position):
+	start_position = _start_position
+	player_position = _player_position
 
-# Cette fonction sera appelée depuis la scène principale.
-func initialize(start_position, player_translation):
-	# Nous positionnons le mob en le plaçant à start_position
+func _ready():
 	global_transform.origin = start_position
 	
-	# et nous le faisons tourner vers player_translation, pour qu'il regarde le joueur.
-	look_at(player_translation, Vector3.UP)
+	# Calculate the direction towards the player
+	var direction = (player_position - start_position).normalized()
 	
-	# Faire tourner ce mob aléatoirement dans une plage de -45 à +45 degrés,
-	# pour qu'il ne se déplace pas directement vers le joueur.
-	rotate_y(rand_range(-PI / 4, PI / 4))
-	
-	# Nous calculons une vitesse aléatoire (entier)
-	var random_speed = int(rand_range(min_speed, max_speed))
-	
-	# Nous calculons une vélocité avant qui représente la vitesse.
-	velocity = Vector3.FORWARD * random_speed
-	
-	# Nous faisons ensuite tourner le vecteur de vélocité en fonction de la rotation Y du mob
-	# pour qu'il se déplace dans la direction où le mob regarde.
-	velocity = velocity.rotated(Vector3.UP, rotation.y)
+	# Rotate this mob randomly within range of -45 and +45 degrees,
+	# so that it doesn't move directly towards the player.
+	direction = direction.rotated(Vector3.UP, rand_range(-PI / 4, PI / 4))
 
-func _on_VisibilityNotifier_screen_exited():
-	queue_free()
+	# Calculate a random speed (integer)
+	var random_speed = rand_range(min_speed, max_speed)
+	# Calculate the velocity vector that represents the speed
+	velocity = direction * random_speed
 
 func squash():
 	emit_signal("squashed")
+	queue_free()
+
+func _on_VisibilityNotifier_screen_exited():
 	queue_free()

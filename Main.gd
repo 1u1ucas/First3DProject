@@ -1,39 +1,27 @@
 extends Node
 
-export var mob_scene: PackedScene
+# Exported variable for the Mob scene
+export (PackedScene) var mob_scene
 
-func _ready():
-	# Check if the signal is already connected to avoid duplicate connections
-	if not $MobTimer.is_connected("timeout", self, "_on_MobTimer_timeout"):
-		var timer_connected = $MobTimer.connect("timeout", self, "_on_MobTimer_timeout")
-		if timer_connected != OK:
-			print("Failed to connect MobTimer timeout signal")
-
+# Function to handle mob spawning
 func _on_MobTimer_timeout():
-	# Create a new instance of the Mob scene.
-	if mob_scene:
-		var mob = mob_scene.instance()
+	# Create a new instance of the Mob scene
+	var mob = mob_scene.instance()
 
-		# Choose a random location on the SpawnPath.
-		var mob_spawn_location = get_node("SpawnPath/SpawnLocation")
-		
-		# Check if mob_spawn_location is valid
-		if mob_spawn_location:
-			# And give it a random offset along the path.
-			mob_spawn_location.unit_offset = randf()
+	# Choose a random location on the SpawnPath
+	var mob_spawn_location = get_node("SpawnPath/SpawnLocation")
+	# Assign a random progress ratio to the SpawnLocation node
+	mob_spawn_location.offset = randf()
 
-			# Get the position from the PathFollow node.
-			var spawn_position = mob_spawn_location.translation
+	# Get the player's 
+	var player_position = get_node("Player").translation
+	# Initialize the mob with the spawn location and player's position
+	mob.initialize(mob_spawn_location.translation, player_position)
 
-			var player_translation = $Player.translation
+	# Add the mob to the current scene
+	add_child(mob)
 
-			# Spawn the mob by adding it to the Main scene first.
-			add_child(mob)
-
-			# Initialize the mob with the correct position and player translation
-			# Using call_deferred to ensure it is properly inside the tree
-			mob.call_deferred("initialize", spawn_position, player_translation)
-		else:
-			print("SpawnLocation node not found")
-	else:
-		print("mob_scene is not assigned")
+# Function to handle player hit event
+func _on_player_hit():
+	# Stop the mob timer
+	get_node("MobTimer").stop()
